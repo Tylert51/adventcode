@@ -6,40 +6,73 @@ import java.util.Arrays;
 public class Sol2 {
     public static void main(String[] args) {
 
-        String[][] sheet = FileReader.getTxt("day3/test.txt");
-        ArrayList<int[]> symbolCoords = findSymbols(sheet);
+        String[][] sheet = FileReader.getTxt("day3/input.txt");
+        ArrayList<Symbol> symbols = findSymbols(sheet);
         ArrayList<Number> numbers = findNumbers(sheet);
-        ArrayList<int[]> possibArr = findPossibleSpots(sheet, symbolCoords);
+        // ArrayList<int[]> possibArr = findPossibleSpots(sheet, symbolCoords);
 
-        // printArr(sheet);
+        printArr(sheet);
 
-        // printArr(symbolCoords);
-        // System.out.println("----------");
-        printArr(possibArr);
-        System.out.println(possibArr.size());
-        // System.out.println(possibArr.size());
+        for(Symbol sym : symbols) {
+            findPossibleSpots(sym);
+            // sym.printSurroundings();
+            // System.out.println("----------");
+        }
 
-        // System.out.println();
-        // printArrNum(numbers);
+        for (Number num : numbers) {
+            for (int[] coord : num.getCoords()) {
+
+                boolean foundNum = false;
+
+                for(Symbol sym : symbols) {
+                    
+
+                    if(doesContain(sym.getSurroundings(), coord)) {
+                        sym.addNum(num);
+                        foundNum = true;
+                        break;
+                    }
+
+
+                }
+
+                if(foundNum) {
+                    break;
+                }
+            }
+        }
+
+        int sum = 0;
+
+        for(Symbol sym : symbols) {
+
+            ArrayList<Number> temp = sym.getNumSurroundings();
+                    
+            if(temp.size() == 2) {
+                sum += temp.get(0).getValue() * temp.get(1).getValue();
+            }
+        }
+
+        System.out.println(sum);
 
     }
 
-    public static ArrayList<int[]> findSymbols(String[][] sheet) {
+    public static ArrayList<Symbol> findSymbols(String[][] sheet) {
         String symbols = "*";
-        ArrayList<int[]> coords = new ArrayList<>();
+        ArrayList<Symbol> symbolsArr = new ArrayList<>();
 
         for (int i = 0; i < sheet.length; i++) {
             for (int j = 0; j < sheet[0].length; j++) {
                 String symbol = sheet[i][j];
 
                 if (symbols.contains(symbol)) {
-                    coords.add(new int[] { i, j });
+                    symbolsArr.add(new Symbol(new int[] { i, j }));
                 }
 
             }
         }
 
-        return coords;
+        return symbolsArr;
     }
 
     public static ArrayList<Number> findNumbers(String[][] sheet) {
@@ -66,36 +99,35 @@ public class Sol2 {
             }
         }
 
-        printArrNum(numArr);
+        // printArrNum(numArr);
         // System.out.println(numArr.size());
 
         return numArr;
     }
 
-    public static ArrayList<int[]> findPossibleSpots(String[][] sheet, ArrayList<int[]> symbolCoords) {
+    public static void findPossibleSpots(Symbol sym) {
         ArrayList<int[]> possibArr = new ArrayList<>();
 
-        for (int[] coords : symbolCoords) {
+        int[] coords = sym.getCoords();
 
-            possibArr.add(new int[] { coords[0] - 1, coords[1] });
+        possibArr.add(new int[] { coords[0] - 1, coords[1] });
 
-            possibArr.add(new int[] { coords[0] - 1, coords[1] + 1 });
+        possibArr.add(new int[] { coords[0] - 1, coords[1] + 1 });
 
-            possibArr.add(new int[] { coords[0], coords[1] + 1 });
+        possibArr.add(new int[] { coords[0], coords[1] + 1 });
 
-            possibArr.add(new int[] { coords[0] + 1, coords[1] + 1 });
+        possibArr.add(new int[] { coords[0] + 1, coords[1] + 1 });
 
-            possibArr.add(new int[] { coords[0] + 1, coords[1] });
+        possibArr.add(new int[] { coords[0] + 1, coords[1] });
 
-            possibArr.add(new int[] { coords[0] + 1, coords[1] - 1 });
+        possibArr.add(new int[] { coords[0] + 1, coords[1] - 1 });
 
-            possibArr.add(new int[] { coords[0], coords[1] - 1 });
+        possibArr.add(new int[] { coords[0], coords[1] - 1 });
 
-            possibArr.add(new int[] { coords[0] - 1, coords[1] - 1 });
+        possibArr.add(new int[] { coords[0] - 1, coords[1] - 1 });
 
-        }
-
-        return possibArr;
+        sym.setSurroundings(possibArr);
+        
     }
 
     public static void printArr(String[][] arr) {
