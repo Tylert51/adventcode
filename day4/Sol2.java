@@ -3,16 +3,20 @@ package day4;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Sol {
+public class Sol2 {
     public static void main(String[] args) {
-        ArrayList<String> games = FileReader.getTxt("day4/test.txt");
+        ArrayList<String> games = FileReader.getTxt("day4/input.txt");
 
         System.out.println("\n\n\n");
 
-        int sum = 0;
+        int[] freq = new int[games.size()];
+
+        for(int i = 0; i < freq.length; i++) {
+            freq[i] = 1;
+        }
 
         for (int i = 0; i < games.size(); i++) {
-
+            
             int score = 0;
 
             ArrayList<String[]> numbers = new ArrayList<>();
@@ -30,11 +34,21 @@ public class Sol {
                 }
             }
 
-            sum += Math.pow(2, score - 1);
+            for(int j = 1; j <= score; j++) {
+                freq[i + j] += freq[i];
+            }
 
         }
 
+        int sum = 0;
+
+        for(int num : freq) {
+            sum += num;
+        }
+
         System.out.println(sum);
+
+        
 
         System.out.println("\n\n\n");
     }
@@ -56,3 +70,4 @@ public class Sol {
     }
 
 }
+
